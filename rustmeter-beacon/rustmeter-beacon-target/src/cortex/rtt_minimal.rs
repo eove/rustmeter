@@ -27,7 +27,7 @@ pub const RTT_MODE_NO_BLOCK_SKIP: u32 = 0;
 pub const RTT_MODE_NO_BLOCK_TRIM: u32 = 1;
 pub const RTT_MODE_BLOCK_IF_FULL: u32 = 2;
 
-pub const BUFFER_SIZE: usize = 4096;
+pub const BUFFER_SIZE: usize = 1024*32; // 32KB 
 
 #[repr(align(4))]
 struct AlignedBuffer([u8; BUFFER_SIZE]);
