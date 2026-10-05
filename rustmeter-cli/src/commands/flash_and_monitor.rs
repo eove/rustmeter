@@ -36,7 +36,9 @@ pub fn flash_and_monitor_chip(
         }
         FlashingTool::ProbeRs => {
             // establish probe-rs connection and flash
-            let probe = connect_to_first_probe()?;
+            let mut probe = connect_to_first_probe()?;
+            // set speed to 24 MHz (24 000 kHz)
+            probe.set_speed(24_000)?;
             let session = probe.attach(chip, Default::default())?.into();
             flash_and_start_controller(&session, elf_path)?;
 
