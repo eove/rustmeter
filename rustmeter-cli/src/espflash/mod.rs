@@ -25,7 +25,7 @@ pub fn get_espflash_connection() -> anyhow::Result<Connection> {
     };
 
     // open serial port
-    let com_port = serialport::COMPort::open(&serialport::new(port.port_name, 115200))
+    let com_port = serialport::TTYPort::open(&serialport::new(port.port_name, 115200))
         .context("Cannot open ComPort")?;
 
     Ok(espflash::connection::Connection::new(
