@@ -46,7 +46,7 @@ pub fn init_rustmeter_beacon(
     #[cfg(any(feature = "rp2040", feature = "rp235xa", feature = "rp235xb"))]
     spawner.spawn(connector(config).map_err(InitializationError::TaskSpawnError)?);
     #[cfg(any(feature = "stm32"))]
-    spawner.spawn(connector(config)).map_err(InitializationError::TaskSpawnError)?;
+    spawner.spawn(connector(config).unwrap());
 
 
     Ok(())
