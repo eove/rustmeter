@@ -90,20 +90,22 @@ impl TimeDelta {
         if !CORE_CLOCK_REFERENCED[core_id].load(portable_atomic::Ordering::Relaxed) {
             do_core_clock_referencing(core_id);
         }
+        let (now,last) = critical_section::with(|_cs| {
+            // estimate time between last timestamp and now
+            let now = unsafe { get_tracing_raw_ticks() };  
+            let last = LAST_TIMESTAMP[core_id].swap(now, portable_atomic::Ordering::Relaxed);
+            (now, last)
+        });
 
-        // estimate time between last timestamp and now
-        let now = unsafe { get_tracing_raw_ticks() };
-        let last = LAST_TIMESTAMP[core_id].swap(now, portable_atomic::Ordering::Relaxed);
-
-        if now < last {
+        let delta = if now < last {
             // Handle wrap-around
             let last_till_end = arbitrary_int::u26::MAX.as_u32() - last;
-            return TimeDelta {
-                delta: last_till_end + now,
-            };
+            last_till_end + now
         } else {
-            TimeDelta { delta: now - last }
-        }
+            now - last
+        };
+
+        TimeDelta { delta }
     }
 
     #[cfg(test)]
